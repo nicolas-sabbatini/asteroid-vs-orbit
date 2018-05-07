@@ -8,6 +8,11 @@ local function saveHighScore()
     love.filesystem.write('score', 'return ' .. data)
 end
 
+-- Debug function
+local function gamefriz()
+    function game:update() end
+end
+
 function game:load()
 
     HighScore = 0
@@ -67,20 +72,12 @@ function game:load()
     end
     function comets:new()
         local c = {}
-        local l = math.random(1,4)
-        if l == 1 then
-            c.x = -10
-            c.y = math.random(0, getWh() + 10) - 10
-        elseif l == 2 then
-            c.x = math.random(0, getWw() + 10) - 10
-            c.y = 610
-        elseif l == 3 then
-            c.x = getWw() + 10
-            c.y = math.random(0, getWh() + 10) - 10
-        else
-            c.x = math.random(0, getWw() + 10) - 10
-            c.y = -10
-        end
+        local angle = math.deg(math.random(0, 360))
+        c.sin =math.sin(angle)
+        c.cos =math.cos(angle)
+        c.d = 400
+        c.x = star.x + c.sin * c.d
+        c.y = star.y + c.cos * c.d        
         c.v = math.random(80, 150)
         table.insert(comets.c, c)
         print(#comets.c)
@@ -95,12 +92,19 @@ function game:load()
             end
             comets.time = 0
         end
-        for _, c in pairs(comets.c) do
-            local k = math.sqrt(((c.x-planet.x)^2 + (c.y-planet.y)^2))
-            if k < 10 then
-                print('comet')
-                os.exit()
+        for k, c in pairs(comets.c) do
+            local pos = math.sqrt(((c.x-planet.x)^2 + (c.y-planet.y)^2))
+            if pos < 17 then
+                print('comet', pos)
+                gamefriz()
             end
+            c.d = c.d - c.v*dt
+            c.x = star.x + c.sin * c.d
+            c.y = star.y + c.cos * c.d
+            -- If the element is remove the nex element is going to take
+            -- its place, k-1 avoid skiping an element
+            if c.d < 10 then table.remove(comets.c, k); k = k-1 end
+            print(#comets.c)
         end
     end
     function comets:draw()
@@ -123,7 +127,7 @@ function game:update(dt)
     if key:checkDown('space') then planet.d = planet.d + (150 * dt)
     else planet.d = planet.d - (100 * dt) end
     if planet.d > 240 then planet.d = 240 end
-    if planet.d <  50 then print('start') ;os.exit() end
+    if planet.d <  50 then print('start') ;gamefriz() end
 
     planet.a = planet.a + (dt * planet.s)
     planet.x = star.x + math.sin(planet.a) * planet.d
@@ -132,7 +136,6 @@ function game:update(dt)
     if (math.sin(planet.a) == 0) and (math.cos(planet.a) == 1) then
         planet.a = 0
     end
-
     if (planet.x < star.x) and (planet.y > star.y) and b then
         b = false
         score = score + 1
