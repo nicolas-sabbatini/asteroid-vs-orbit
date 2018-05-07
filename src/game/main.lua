@@ -3,18 +3,26 @@ local game = {}
 local key = require 'libs/simpleKey'
 local comets = require('game/comets')
 
-local HighScore, score, b, font,  backgraund, star, planet
+local HighScore, score, b, font, backgraund, star, planet, state
 
 local function saveHighScore()
-    love.filesystem.write('score', 'return ' .. data)
+    love.filesystem.write('score', 'return ' .. HighScore)
 end
 
 -- Debug function
-local function gamefriz()
-    function game:update() end
+local function endGame()
+    state = 'pause'
+    comets:restart()
+    planet:restart()
+    if score > HighScore then
+        HighScore = score
+        saveHighScore()
+    end
 end
 
 function game:load()
+
+    state = 'game'
 
     HighScore = 0
     score = 0
@@ -56,11 +64,16 @@ function game:load()
 
 
     planet = {}
-    planet.a = 0
-    planet.d = 220
-    planet.s = 2
-    planet.x = star.x + planet.d
-    planet.y = star.y + planet.d
+    function planet:restart()
+        planet.alive = true
+        planet.a = 0
+        planet.d = 220
+        planet.s = 2
+        planet.x = star.x + math.sin(planet.a) * planet.d
+        planet.y = star.y + math.cos(planet.a) * planet.d
+    end
+    planet:restart()
+
     
 
 end
@@ -70,31 +83,31 @@ function game:update(dt)
     backgraund.ps:update(dt)
     -- Star
     star.ps:update(dt)
-    -- Comets
-    comets:update(dt, star, planet)
-
-    -- Player
-    if key:checkDown('space') then planet.d = planet.d + (150 * dt)
-    else planet.d = planet.d - (100 * dt) end
-    if planet.d > 240 then planet.d = 240 end
-    if planet.d <  50 then print('start') ;gamefriz() end
-
-    planet.a = planet.a + (dt * planet.s)
-    planet.x = star.x + math.sin(planet.a) * planet.d
-    planet.y = star.y + math.cos(planet.a) * planet.d
-    -- Avoid overflow of planet.a, tray
-    if (math.sin(planet.a) == 0) and (math.cos(planet.a) == 1) then
-        planet.a = 0
+    if state == 'game' then
+        -- Comets
+        comets:update(dt, star, planet)
+        -- Player movement
+        if key:checkDown('space') then planet.d = planet.d + (150 * dt)
+        else planet.d = planet.d - (100 * dt) end
+        if planet.d > 240 then planet.d = 240 end
+        if planet.d <  50 then planet.alive = false end
+        -- Player angle
+        planet.a = planet.a + (dt * planet.s)
+        planet.x = star.x + math.sin(planet.a) * planet.d
+        planet.y = star.y + math.cos(planet.a) * planet.d
+        -- Avoid overflow of planet.a, tray
+        if (math.sin(planet.a) == 0) and (math.cos(planet.a) == 1) then
+            planet.a = 0
+        end
+        if (planet.x > star.x) and (planet.y > star.y) and b then
+            b = false
+            score = score + 1
+        elseif (planet.x < star.x) and (planet.y < star.y) then
+            b = true
+        end
+        planet.s = (240 /planet.d) ^ 1.2
+        if not planet.alive then endGame() end
     end
-    if (planet.x < star.x) and (planet.y > star.y) and b then
-        b = false
-        score = score + 1
-    elseif (planet.x < star.x) and (planet.y < star.y) then
-        b = true
-    end
-
-    planet.s = (240 /planet.d) ^ 1.2
-
 end
 
 function game:draw()
