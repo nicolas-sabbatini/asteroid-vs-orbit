@@ -58,11 +58,11 @@ function game:load()
     
     comets = {}
     comets.c = {}
-    comets.max = 5
+    comets.max = 3
     comets.time = 0
     function comets:restart()
         comets.c = {}
-        comets.max = 5
+        comets.max = 3
         comets.time = 0
     end
     function comets:new()
@@ -81,39 +81,49 @@ function game:load()
             c.x = math.random(0, getWw() + 10) - 10
             c.y = -10
         end
-        c.v = math.random(150, 40)
+        c.v = math.random(80, 150)
         table.insert(comets.c, c)
+        print(#comets.c)
     end
     function comets:update(dt)
         comets.time = comets.time + dt
         if comets.time > comets.max then
             comets:new()
-            if comets.max > 0.2 then
-                comets.max = comets.max - 0.1
+            if comets.max > 0.3 then
+                comets.max = comets.max - (0.3/comets.max)
+                print(comets.max)
             end
             comets.time = 0
         end
         for _, c in pairs(comets.c) do
-            
-            if math.sqrt(((c.x+planet.x)^2 + (c.y+planet.y)^2) < 10 then
+            local k = math.sqrt(((c.x-planet.x)^2 + (c.y-planet.y)^2))
+            if k < 10 then
+                print('comet')
                 os.exit()
             end
+        end
+    end
+    function comets:draw()
+        for _, c in pairs(comets.c) do
+            love.graphics.circle('fill', c.x, c.y, 10)
         end
     end
 
 end
 
 function game:update(dt)
-
+    -- Bakgraund
     backgraund.ps:update(dt)
+    -- Star
     star.ps:update(dt)
-
+    -- Comets
     comets:update(dt)
 
+    -- Player
     if key:checkDown('space') then planet.d = planet.d + (150 * dt)
     else planet.d = planet.d - (100 * dt) end
     if planet.d > 240 then planet.d = 240 end
-    if planet.d <  50 then os.exit() end
+    if planet.d <  50 then print('start') ;os.exit() end
 
     planet.a = planet.a + (dt * planet.s)
     planet.x = star.x + math.sin(planet.a) * planet.d
@@ -135,14 +145,20 @@ function game:update(dt)
 end
 
 function game:draw()
+    -- Backgraund
     love.graphics.draw(backgraund.ps, 0, 0)
+    -- Comets
+    comets:draw()
+    -- Star
     love.graphics.circle('line', star.x, star.y, 240)
+    love.graphics.draw(star.img, star.x - 40, star.y - 40)
+    love.graphics.draw(star.ps, star.x, star.y)
+    -- Score
+    love.graphics.print('Score: ' .. score)
+    -- Planet
     love.graphics.setColor(0.001,1,0.5)
     love.graphics.circle('fill', planet.x, planet.y, 10)
     love.graphics.setColor(1,1,1)
-    love.graphics.draw(star.img, star.x - 40, star.y - 40)
-    love.graphics.draw(star.ps, star.x, star.y)
-    love.graphics.print('Score: ' .. score)
 end
 
 return game
