@@ -1,10 +1,10 @@
 local state, switchState, extra
 require 'init'
-math.randomseed( os.time() )
+love.math.setRandomSeed( os.time() )
 
 -- Set a "good" random
 for i=1, 10 do 
-    math.random()
+    love.math.random()
 end
 
 function love.load()
