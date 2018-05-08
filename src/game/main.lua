@@ -14,10 +14,12 @@ local function endGame()
     state = 'menu'
     comets:restart()
     planet:restart()
+    canvas:update(score)
     if score > HighScore then
         HighScore = score
         saveHighScore()
     end
+    score = 0
 end
 
 function game:load()
@@ -31,9 +33,21 @@ function game:load()
         HighScore = love.filesystem.load('score')
         HighScore = HighScore()
     end
-    -- Leters
+    -- Font
     font = love.graphics.newFont(16)
     love.graphics.setFont(font)
+    -- Canvas
+    canvas = {}
+    canvas.canvas = love.graphics.newCanvas(400, 300)
+    function canvas:update(s)
+        love.graphics.setCanvas(canvas.canvas)
+            love.graphics.setColor(0,0,0)
+            love.graphics.setColor(1,1,1)
+            love.graphics.printf('SCORE\n'.. s ..'\n HIGHSCORE\n'.. HighScore 
+               .. '\n\'SPACE\' to start\n\'Q\' to quit', 0, 0, 400, 'center')
+        love.graphics.setCanvas()
+    end
+    canvas:update(score)
     -- particles for all emiters
     local particle = love.graphics.newImage('assets/pixel.png')
     particle:setFilter('nearest','nearest')
@@ -69,6 +83,7 @@ function game:load()
         planet.s = 2
         planet.x = star.x + math.sin(planet.a) * planet.d
         planet.y = star.y + math.cos(planet.a) * planet.d
+        b = false
     end
     planet:restart()
 end
@@ -123,6 +138,9 @@ function game:draw()
     love.graphics.setColor(0.001,1,0.5)
     love.graphics.circle('fill', planet.x, planet.y, 10)
     love.graphics.setColor(1,1,1)
+    if state == 'menu' then
+        love.graphics.draw(canvas.canvas,getWw()/2 - 200, getWh()/2 - 160)
+    end
 end
 
 return game
