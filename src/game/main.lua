@@ -11,7 +11,7 @@ end
 
 -- Debug function
 local function endGame()
-    state = 'pause'
+    state = 'menu'
     comets:restart()
     planet:restart()
     if score > HighScore then
@@ -21,9 +21,9 @@ local function endGame()
 end
 
 function game:load()
-
-    state = 'game'
-
+    -- Initial game state
+    state = 'menu'
+    -- Score
     HighScore = 0
     score = 0
     b = false
@@ -31,13 +31,13 @@ function game:load()
         HighScore = love.filesystem.load('score')
         HighScore = HighScore()
     end
-
+    -- Leters
     font = love.graphics.newFont(16)
     love.graphics.setFont(font)
-
+    -- particles for all emiters
     local particle = love.graphics.newImage('assets/pixel.png')
     particle:setFilter('nearest','nearest')
-
+    -- Backgraund starts
     backgraund = {}
     backgraund.ps = love.graphics.newParticleSystem(particle, 60)
     backgraund.ps:setParticleLifetime(2, 5)
@@ -47,8 +47,7 @@ function game:load()
     backgraund.ps:setColors(1, 1, 1, 0, 1, 1, 1,0.5, 1, 1, 1, 0) 
     backgraund.ps:setSizeVariation(1)
     backgraund.ps:update(1)
-
-
+    -- Start
     star = {}
     star.x = getWw()/2
     star.y = getWh()/2
@@ -61,8 +60,7 @@ function game:load()
     --                r  g  b  a r1 g1 b1 a1
     star.ps:setColors(1, 1, 0, 1, 1, 0, 0, 1)
     star.ps:update(1)
-
-
+    -- Planet
     planet = {}
     function planet:restart()
         planet.alive = true
@@ -73,9 +71,6 @@ function game:load()
         planet.y = star.y + math.cos(planet.a) * planet.d
     end
     planet:restart()
-
-    
-
 end
 
 function game:update(dt)
@@ -107,6 +102,9 @@ function game:update(dt)
         end
         planet.s = (240 /planet.d) ^ 1.2
         if not planet.alive then endGame() end
+    elseif state == 'menu' then
+        if key:checkDown('space') then state = 'game' end
+        if key:checkDown('q') then love.event.quit() end
     end
 end
 
