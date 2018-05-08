@@ -6,6 +6,7 @@ function love.conf(t)
 
 	t.identity = 'asteroid-vs-orbit'
 
+	-- This variables are used for love-release [https://goo.gl/5KHj15]
 	t.releases = {
 		title = 'Asteroid vs Orbit',            -- The project title (string)
 		package = nil,                          -- The project command and package name (string)
