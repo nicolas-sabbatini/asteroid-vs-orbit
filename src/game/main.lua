@@ -41,6 +41,7 @@ function game:load()
     canvas.canvas = love.graphics.newCanvas(400, 300)
     function canvas:update(s)
         love.graphics.setCanvas(canvas.canvas)
+            love.graphics.clear()
             love.graphics.setColor(0,0,0)
             love.graphics.setColor(1,1,1)
             love.graphics.printf('SCORE\n'.. s ..'\n HIGHSCORE\n'.. HighScore 
