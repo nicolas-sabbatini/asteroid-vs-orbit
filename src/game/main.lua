@@ -41,17 +41,18 @@ function game:load()
     canvas.canvas = love.graphics.newCanvas(400, 300)
     function canvas:update(s)
         love.graphics.setCanvas(canvas.canvas)
-            love.graphics.clear()
-            love.graphics.setColor(0,0,0)
-            love.graphics.setColor(1,1,1)
-            love.graphics.printf('SCORE\n'.. s ..'\n HIGHSCORE\n'.. HighScore 
-               .. '\n\'SPACE\' to start\n\'Q\' to quit', 0, 0, 400, 'center')
+        love.graphics.clear()
+        love.graphics.setColor(0, 0, 0)
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.printf('SCORE\n' .. s .. '\n HIGHSCORE\n' .. HighScore
+            .. '\n\'SPACE\' to start\n\'Q\' to quit', 0, 0, 400, 'center')
         love.graphics.setCanvas()
     end
+
     canvas:update(score)
     -- particles for all emiters
     local particle = love.graphics.newImage('assets/pixel.png')
-    particle:setFilter('nearest','nearest')
+    particle:setFilter('nearest', 'nearest')
     -- Backgraund starts
     backgraund = {}
     backgraund.ps = love.graphics.newParticleSystem(particle, 60)
@@ -59,15 +60,15 @@ function game:load()
     backgraund.ps:setEmissionRate(60)
     backgraund.ps:setEmissionArea('uniform', getWw(), getWh())
     --                      r  g  b  a r1 g1 b1 a1  r2 g2 b2 a2
-    backgraund.ps:setColors(1, 1, 1, 0, 1, 1, 1,0.5, 1, 1, 1, 0) 
+    backgraund.ps:setColors(1, 1, 1, 0, 1, 1, 1, 0.5, 1, 1, 1, 0)
     backgraund.ps:setSizeVariation(1)
     backgraund.ps:update(1)
     -- Start
     star = {}
-    star.x = getWw()/2
-    star.y = getWh()/2
+    star.x = getWw() / 2
+    star.y = getWh() / 2
     star.img = love.graphics.newImage('assets/sol.png')
-    star.img:setFilter('nearest','nearest')
+    star.img:setFilter('nearest', 'nearest')
     star.ps = love.graphics.newParticleSystem(particle, 500)
     star.ps:setParticleLifetime(1, 2)
     star.ps:setEmissionRate(210)
@@ -86,6 +87,7 @@ function game:load()
         planet.y = star.y + math.cos(planet.a) * planet.d
         b = false
     end
+
     planet:restart()
 end
 
@@ -101,7 +103,7 @@ function game:update(dt)
         if key:checkDown('space') then planet.d = planet.d + (150 * dt)
         else planet.d = planet.d - (100 * dt) end
         if planet.d > 240 then planet.d = 240 end
-        if planet.d <  50 then planet.alive = false end
+        if planet.d < 50 then planet.alive = false end
         -- Player angle
         planet.a = planet.a + (dt * planet.s)
         planet.x = star.x + math.sin(planet.a) * planet.d
@@ -116,7 +118,7 @@ function game:update(dt)
         elseif (planet.x < star.x) and (planet.y < star.y) then
             b = true
         end
-        planet.s = (240 /planet.d) ^ 1.2
+        planet.s = (240 / planet.d) ^ 1.2
         if not planet.alive then endGame() end
     elseif state == 'menu' then
         if key:checkDown('space') then state = 'game' end
@@ -136,11 +138,11 @@ function game:draw()
     -- Score
     love.graphics.print('Score: ' .. score)
     -- Planet
-    love.graphics.setColor(0.001,1,0.5)
+    love.graphics.setColor(0.001, 1, 0.5)
     love.graphics.circle('fill', planet.x, planet.y, 10)
-    love.graphics.setColor(1,1,1)
+    love.graphics.setColor(1, 1, 1)
     if state == 'menu' then
-        love.graphics.draw(canvas.canvas,getWw()/2 - 200, getWh()/2 - 160)
+        love.graphics.draw(canvas.canvas, getWw() / 2 - 200, getWh() / 2 - 160)
     end
 end
 

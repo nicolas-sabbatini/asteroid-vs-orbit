@@ -47,12 +47,12 @@ API
 DEPENDENCIES
         Love2D
 
-]]--
+]] --
 
 local simpleKey = {
-    _LICENSE     = "MIT License - Copyright (c) 2017",
-    _URL         = "https://github.com/NicolasSabba/simpleKey",
-    _VERSION     = "0.01"
+    _LICENSE = "MIT License - Copyright (c) 2017",
+    _URL     = "https://github.com/NicolasSabba/simpleKey",
+    _VERSION = "0.01"
 }
 
 local key = {}
@@ -61,7 +61,7 @@ local key = {}
 function simpleKey:keyInit(keys)
     keys = keys or {}
     key.keysPressed = {}
-    key.keysReleased ={}
+    key.keysReleased = {}
     simpleKey:keyBind(keys)
 end
 
@@ -72,11 +72,11 @@ end
 
 -- Bind a key or a table of keys.
 function simpleKey:keyBind(keys)
-    if type(keys)=="table" then
+    if type(keys) == "table" then
         -- If the keys are a table add all of them to check
         for _, k in pairs(keys) do
             key.keysPressed[k] = false
-            key.keysReleased[k] =false
+            key.keysReleased[k] = false
         end
     else
         -- Else add the key intro the keys to check
@@ -87,7 +87,7 @@ end
 
 -- Unbind a key or a table of keys.
 function simpleKey:keyUnbind(keys)
-    if type(keys)=="table" then
+    if type(keys) == "table" then
         -- If the keys are a table remove all of them
         for _, k in pairs(keys) do
             key.keysPressed[k] = nil

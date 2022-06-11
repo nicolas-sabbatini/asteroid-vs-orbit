@@ -13,19 +13,19 @@ function initializeConfiguration()
         ConfSetings = love.filesystem.load('ConfSetings.lua')
         ConfSetings = ConfSetings()
     end
-    
+
     -- Load video configuration
     Realww, Realwh = ConfSetings.windowsWidth or 800, ConfSetings.windowsHeight or 600
     fullScreen = ConfSetings.fullScreen or false
     vSync = ConfSetings.vsync or true
-    
+
     -- Load Volumen configuration
     musicVolume = ConfSetings.musicVolume or 1
     sfxVolume = ConfSetings.sfxVolume or 1
-    
+
     -- Aplly the video configuration options
-    love.window.setMode(Realww, Realwh,{fullscreen = fullScreen, vsync = vSync})
-    
+    love.window.setMode(Realww, Realwh, { fullscreen = fullScreen, vsync = vSync })
+
     -- Get the scale
     scaleX = Realww / 800
     scaleY = Realwh / 600
@@ -35,18 +35,18 @@ end
 -- Save the configuration
 function saveConfiguration()
 
-    local ww, wh, options =  love.window.getMode()
+    local ww, wh, options = love.window.getMode()
 
     -- Create a table whit the configurations options and write to the configuration file
     local data = 'return {\n'
-    data = data .. 'windowsWidth = '.. ww ..',\n' 
-    data = data .. 'windowsHeight = '.. wh ..',\n' 
-    data = data .. 'fullScreen = '.. tostring(options.fullscreen) ..',\n' 
-    data = data .. 'vsync = '.. tostring(options.vsync) ..',\n' 
-    data = data .. 'musicVolume = '.. musicVolume ..',\n' 
-    data = data .. 'sfxVolume = '.. sfxVolume ..'\n' 
-    data = data .. '}\n' 
-    
+    data = data .. 'windowsWidth = ' .. ww .. ',\n'
+    data = data .. 'windowsHeight = ' .. wh .. ',\n'
+    data = data .. 'fullScreen = ' .. tostring(options.fullscreen) .. ',\n'
+    data = data .. 'vsync = ' .. tostring(options.vsync) .. ',\n'
+    data = data .. 'musicVolume = ' .. musicVolume .. ',\n'
+    data = data .. 'sfxVolume = ' .. sfxVolume .. '\n'
+    data = data .. '}\n'
+
     -- Save the data in a file
     love.filesystem.write('ConfSetings.lua', data)
 
@@ -63,7 +63,7 @@ function resizeWindows(newWW, newWH, newOptions)
 end
 
 function debugStatics()
-    local stats = love.graphics.getStats( )
+    local stats = love.graphics.getStats()
     print('----------------------------')
     print(stats.drawcalls .. '   drawcalls')
     print(stats.canvasswitches .. '   canvasswitches')
@@ -72,7 +72,7 @@ function debugStatics()
     print(stats.canvases .. '    canvases')
     print(stats.fonts .. '    fonts')
     print(collectgarbage('count') / 1024 .. ' MB   memory')
-    print(love.timer.getFPS().. '     FPS')
+    print(love.timer.getFPS() .. '     FPS')
     print('----------------------------')
 end
 

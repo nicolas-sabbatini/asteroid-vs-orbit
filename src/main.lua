@@ -1,9 +1,9 @@
 local state, switchState, extra
 require 'init'
-love.math.setRandomSeed( os.time() )
+love.math.setRandomSeed(os.time())
 
 -- Set a "good" random
-for i=1, 10 do 
+for i = 1, 10 do
     love.math.random()
 end
 
