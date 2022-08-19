@@ -24,13 +24,13 @@ impl Plugin for CameraPlugin {
     }
 }
 
-fn setup_camera(mut commands: Commands, win_res: Res<Windows>, mut images: ResMut<Assets<Image>>) {
-    // Get win size
-    let win = win_res.get_primary().unwrap();
-
+fn setup_camera(mut commands: Commands, mut images: ResMut<Assets<Image>>) {
     // Set up main camera
     let mut main_camera = Camera2dBundle::default();
-    main_camera.projection.scaling_mode = ScalingMode::FixedVertical(win.height());
+    main_camera.projection.scaling_mode = ScalingMode::Auto {
+        min_width: WIN_WIDTH,
+        min_height: WIN_HEIGHT,
+    };
     main_camera.camera_2d.clear_color = ClearColorConfig::Custom(MAIN_CLEAR_COLOR);
     // Draw last
     main_camera.camera.priority = 2;
@@ -48,14 +48,26 @@ fn setup_camera(mut commands: Commands, win_res: Res<Windows>, mut images: ResMu
         height: WIN_HEIGHT as u32,
         ..default()
     };
+
+    #[cfg(not(target_arch = "wasm32"))]
     let mut render_target_image = Image::new_fill(
         render_target_size,
         TextureDimension::D2,
         &WHITE_BGRA,
         TextureFormat::Bgra8UnormSrgb,
     );
+
+    #[cfg(target_arch = "wasm32")]
+    let mut render_target_image = Image::new_fill(
+        render_target_size,
+        TextureDimension::D2,
+        &WHITE_BGRA,
+        TextureFormat::Rgba8UnormSrgb,
+    );
+
     // By default an image can't be used as a render target
     render_target_image.texture_descriptor.usage |= TextureUsages::RENDER_ATTACHMENT;
+
     let render_target_handle = images.add(render_target_image);
     // Spawn render target on the world
     commands
