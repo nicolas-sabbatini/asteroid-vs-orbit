@@ -8,7 +8,7 @@ const STAR_Z: f32 = 5.0;
 const STAR_SIZE: f32 = 40.0;
 
 const RING_POS: Vec2 = Vec2::ZERO;
-const RING_SIZE: f32 = 240.0;
+pub const RING_SIZE: f32 = 240.0;
 const RING_SEGMENTS: usize = 256;
 
 pub struct StarPlugin;

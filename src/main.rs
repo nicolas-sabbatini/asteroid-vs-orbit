@@ -14,7 +14,6 @@ use play_state::PlayStatePlugin;
 mod asset_loading;
 mod camera;
 mod config;
-mod constants;
 mod flow_control;
 mod play_state;
 
