@@ -2,7 +2,7 @@ use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
 
 use crate::flow_control::GameState;
 
-use super::star::RING_SIZE;
+use super::{game_ui::UpdateScoreboardEvent, star::RING_SIZE};
 
 const PLAYER_SATRT_X: f32 = 0.0;
 const PLAYER_SATRT_Y: f32 = 0.0;
@@ -26,6 +26,9 @@ pub struct RotationSpeed(f32);
 #[derive(Debug, Component, Reflect)]
 pub struct Distance(f32);
 
+#[derive(Debug, Component, Reflect)]
+pub struct CanScore(bool);
+
 pub struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
@@ -36,7 +39,7 @@ impl Plugin for PlayerPlugin {
             )
             .add_systems(
                 Update,
-                (handle_input, move_player)
+                (handle_input, move_player, check_if_player_scores)
                     .chain()
                     .run_if(in_state(GameState::RunGame)),
             );
@@ -64,7 +67,15 @@ fn set_up_player(
         Rotation(PLAYER_ROTATION),
         RotationSpeed(PLAYER_ROTATION_SPEED),
         Distance(PLAYER_START_DISTANCE),
+        CanScore(false),
     ));
+}
+
+fn restat_players(mut query: Query<(&mut Rotation, &mut Distance), With<Player>>) {
+    for (mut rotation, mut distance) in &mut query {
+        rotation.0 = PLAYER_ROTATION;
+        distance.0 = PLAYER_START_DISTANCE;
+    }
 }
 
 fn update_player_position(mut query: Query<(&mut Transform, &Rotation, &Distance), With<Player>>) {
@@ -96,4 +107,10 @@ fn move_player(
         rotation_speed.0 = (RING_SIZE / distance.0).powf(1.2);
         rotation.0 += rotation_speed.0 * time.delta_seconds();
     }
+}
+
+fn check_if_player_scores(
+    mut query: Query<(&Transform, &mut CanScore), With<Player>>,
+    score_event: EventWriter<UpdateScoreboardEvent>,
+) {
 }
