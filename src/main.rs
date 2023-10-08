@@ -9,6 +9,7 @@ use bevy::{prelude::*, window::WindowResolution};
 use camera::CameraPlugin;
 use config::*;
 use flow_control::FlowControlPlugin;
+use game_over_state::GameOverStatePlugin;
 use main_menu_state::MainMenuStatePlugin;
 use play_state::PlayStatePlugin;
 
@@ -16,6 +17,7 @@ mod asset_loading;
 mod camera;
 mod config;
 mod flow_control;
+mod game_over_state;
 mod main_menu_state;
 mod play_state;
 
@@ -38,7 +40,15 @@ fn main() {
 
     app.add_plugins((CameraPlugin, FlowControlPlugin, AssetLoadingPlugin));
 
-    app.add_plugins((MainMenuStatePlugin, PlayStatePlugin));
+    app.add_plugins((MainMenuStatePlugin, PlayStatePlugin, GameOverStatePlugin));
+
+    // When the assets finish loading, change the state to the main menu
+    app.add_systems(
+        OnEnter(flow_control::GameState::RunGame),
+        |mut next_state: ResMut<NextState<flow_control::RunState>>| {
+            next_state.set(flow_control::RunState::MainMenu);
+        },
+    );
 
     app.run();
 }

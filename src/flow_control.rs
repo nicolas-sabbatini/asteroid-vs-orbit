@@ -11,7 +11,7 @@ pub enum GameState {
 pub enum RunState {
     #[default]
     None,
-    MinMenu,
+    MainMenu,
     Run,
     DeadAnimation,
     Pause,

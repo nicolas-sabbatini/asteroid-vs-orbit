@@ -2,10 +2,10 @@ use bevy::prelude::*;
 
 use crate::flow_control::RunState;
 
-pub struct MainMenuStatePlugin;
-impl Plugin for MainMenuStatePlugin {
+pub struct GameOverStatePlugin;
+impl Plugin for GameOverStatePlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(RunState::MainMenu), change_state);
+        app.add_systems(OnEnter(RunState::GameOver), change_state);
     }
 }
 
