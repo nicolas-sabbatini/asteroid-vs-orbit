@@ -1,12 +1,9 @@
 use bevy::prelude::*;
 
-#[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
-pub enum GameSet {}
-
 #[derive(States, Debug, Hash, PartialEq, Eq, Clone, Default)]
 pub enum GameState {
-    LoadAssets,
     #[default]
+    LoadAssets,
     RunGame,
 }
 
@@ -14,8 +11,11 @@ pub enum GameState {
 pub enum RunState {
     #[default]
     None,
+    MinMenu,
     Run,
+    DeadAnimation,
     Pause,
+    GameOver,
 }
 
 pub struct FlowControlPlugin;

@@ -6,6 +6,9 @@ mod game_ui;
 pub mod player;
 mod star;
 
+#[derive(Debug, Component)]
+struct CelestialSize(f32);
+
 pub struct PlayStatePlugin;
 impl Plugin for PlayStatePlugin {
     fn build(&self, app: &mut App) {

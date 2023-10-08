@@ -1,6 +1,6 @@
 use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
 
-use crate::flow_control::GameState;
+use crate::flow_control::{GameState, RunState};
 
 use super::{game_ui::UpdateScoreboardEvent, star::RING_SIZE};
 
@@ -20,28 +20,41 @@ struct Player;
 #[derive(Debug, Component, Reflect)]
 pub struct Rotation(f32);
 
-#[derive(Debug, Component, Reflect)]
+#[derive(Debug, Component)]
 pub struct RotationSpeed(f32);
 
 #[derive(Debug, Component, Reflect)]
 pub struct Distance(f32);
 
-#[derive(Debug, Component, Reflect)]
+#[derive(Debug, Component)]
 pub struct CanScore(bool);
+
+#[derive(Debug, Component)]
+pub struct Score(usize);
 
 pub struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(OnEnter(GameState::RunGame), set_up_player)
+            .add_systems(OnEnter(RunState::GameOver), restart_player)
+            .add_systems(OnEnter(RunState::MinMenu), restart_player)
             .add_systems(
                 Update,
-                (update_player_position).run_if(in_state(GameState::RunGame)),
-            )
-            .add_systems(
-                Update,
-                (handle_input, move_player, check_if_player_scores)
-                    .chain()
-                    .run_if(in_state(GameState::RunGame)),
+                (
+                    // On game runing
+                    (
+                        handle_input,
+                        move_player,
+                        update_player_position,
+                        check_if_player_scores,
+                    )
+                        .chain()
+                        .run_if(in_state(RunState::Run)),
+                    // On player dead
+                    (move_player, update_player_position)
+                        .chain()
+                        .run_if(in_state(RunState::DeadAnimation)),
+                ),
             );
     }
 }
@@ -68,13 +81,15 @@ fn set_up_player(
         RotationSpeed(PLAYER_ROTATION_SPEED),
         Distance(PLAYER_START_DISTANCE),
         CanScore(false),
+        Score(0),
     ));
 }
 
-fn restat_players(mut query: Query<(&mut Rotation, &mut Distance), With<Player>>) {
-    for (mut rotation, mut distance) in &mut query {
+fn restart_player(mut query: Query<(&mut Rotation, &mut Distance, &mut Score), With<Player>>) {
+    for (mut rotation, mut distance, mut score) in &mut query {
         rotation.0 = PLAYER_ROTATION;
         distance.0 = PLAYER_START_DISTANCE;
+        score.0 = 0;
     }
 }
 
@@ -110,7 +125,20 @@ fn move_player(
 }
 
 fn check_if_player_scores(
-    mut query: Query<(&Transform, &mut CanScore), With<Player>>,
-    score_event: EventWriter<UpdateScoreboardEvent>,
+    mut query: Query<(&Transform, &mut CanScore, &mut Score), With<Player>>,
+    mut score_event: EventWriter<UpdateScoreboardEvent>,
 ) {
+    for (transform, mut can_score, mut score) in &mut query {
+        if transform.translation.x > 0.0 && transform.translation.y < 0.0 && can_score.0 {
+            println!("Player scored!");
+            can_score.0 = false;
+            score.0 += 1;
+            score_event.send(UpdateScoreboardEvent {
+                new_score: score.0.to_string(),
+            });
+        } else if transform.translation.x < 0.0 && transform.translation.y > 0.0 && !can_score.0 {
+            println!("Player can score again!");
+            can_score.0 = true;
+        }
+    }
 }
