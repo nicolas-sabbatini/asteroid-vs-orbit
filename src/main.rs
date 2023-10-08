@@ -1,4 +1,4 @@
-// // Load and use this module on debug
+// Load and use this module on debug
 #[cfg(debug_assertions)]
 use debug_plugin::DebugPlugin;
 #[cfg(debug_assertions)]
