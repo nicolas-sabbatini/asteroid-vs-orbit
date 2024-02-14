@@ -1,7 +1,7 @@
 use bevy::prelude::Color;
 // Screen config
 pub const WINDOW_WIDTH: f32 = 800.0;
-pub const WINDOW_HEIGHT: f32 = 800.0;
+pub const WINDOW_HEIGHT: f32 = 700.0;
 pub const WINDOW_TITLE: &str = "asteroid-vs-orbit";
 
 pub const WINDOW_CAMERA_NAME: &str = "windows camera";
