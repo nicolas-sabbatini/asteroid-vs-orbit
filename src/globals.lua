@@ -15,3 +15,7 @@ MAIN_SCREEN = letterbox.newLetterbox({
 	width = GAME_WIDTH,
 	height = GAME_HEIGHT,
 })
+
+-- Keys
+KEYS = require("vendors.simple_keyboard")
+KEYS:keyBind({ "space" })

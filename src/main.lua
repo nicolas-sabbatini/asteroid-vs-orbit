@@ -1,7 +1,8 @@
 require("globals")
 
-local screen = require("background")
+local background = require("background")
 local player = require("player")
+local star = require("star")
 
 love.math.setRandomSeed(love.timer.getTime())
 
@@ -12,15 +13,19 @@ end
 function love.load() end
 
 function love.update(dt)
-	screen:update(dt)
+	KEYS:updateInput()
+
+	background:update(dt)
 	player:update(dt)
+	star:update(dt)
 end
 
 function love.draw()
 	MAIN_SCREEN:drawInsideRig()
 	love.graphics.clear(BACKGROUND)
-	screen:draw()
+	background:draw()
 	player:draw()
+	star:draw()
 	MAIN_SCREEN:stopDrawInsideRig()
 
 	-- Draw to screen
