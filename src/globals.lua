@@ -1,6 +1,9 @@
 GAME_WIDTH = 1920
 GAME_HEIGHT = 1080
 
+---@type "start" | "play"
+STATE = "start"
+
 -- Palette
 local rgb = require("vendors.rgb")
 BACKGROUND = rgb.exaToTable(0x181425)
@@ -19,3 +22,7 @@ MAIN_SCREEN = letterbox.newLetterbox({
 -- Keys
 KEYS = require("vendors.simple_keyboard")
 KEYS:keyBind({ "space" })
+
+-- Tape
+require("vendors.tape")
+Tape.init("console")
