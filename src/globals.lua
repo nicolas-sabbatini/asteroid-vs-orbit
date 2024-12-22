@@ -1,16 +1,16 @@
 GAME_WIDTH = 1920
 GAME_HEIGHT = 1080
 
----@type "start" | "play"
-STATE = "start"
+---@type "main_menu" | "play"
+STATE = "main_menu"
 
 -- Palette
 local rgb = require("vendors.rgb")
 BACKGROUND = rgb.exaToTable(0x181425)
 
 -- Camera
-local letterbox = require("vendors.letterbox")
-MAIN_SCREEN = letterbox.newLetterbox({
+LETTERBOX = require("vendors.letterbox")
+MAIN_SCREEN = LETTERBOX.newLetterbox({
 	type = "normal",
 	width = GAME_WIDTH,
 	height = GAME_HEIGHT,

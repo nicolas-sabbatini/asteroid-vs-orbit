@@ -1,4 +1,3 @@
-local variables = require("player.variables")
 local graphics = require("player.graphics")
 
 local P = {}
@@ -17,43 +16,52 @@ local fall_speed = 100
 local jump_speed = 150
 
 -- Player variables
-local distance = max_distance * 0.5 - variables.size / 2
+local size = 44
+local distance = max_distance * 0.5 - size / 2
 local rotation_speed = 0
+local rotation = 0
+local x = 0
+local y = 0
+local score = 0
 
 function P:restart()
-	variables.rotation = 0
-	distance = max_distance / 2 + variables.size
+	rotation = 0
+	distance = max_distance / 2 + size
 	rotation_speed = 0
-	variables.score = 0
+	score = 0
 end
 
 function P:update(dt)
 	if STATE == "play" then
 		if KEYS:isDown("space") then
 			distance = distance + jump_speed * dt
-		-- DBG
+		-- TODO: DBG
 		else
 			distance = distance - fall_speed * dt
+			-- END
 		end
-
 		if distance < min_dinstance then
 			-- TODO: Kill
 			distance = min_dinstance
+		-- END
 		elseif distance > max_distance then
 			distance = max_distance
 		end
 		rotation_speed = max_rotation_speed - rotation_slop_change * (distance - min_dinstance)
+
+		score = score + 10
+		love.event.push("updateScore", score)
 	end
 
-	variables.rotation = variables.rotation + (dt * rotation_speed)
-	variables.x = center_width - math.sin(-variables.rotation) * distance
-	variables.y = center_height - math.cos(-variables.rotation) * distance
+	rotation = rotation + (dt * rotation_speed)
+	x = center_width - math.sin(-rotation) * distance
+	y = center_height - math.cos(-rotation) * distance
 	graphics:update(dt)
 end
 
 function P:draw()
 	love.graphics.circle("line", center_width, center_height, max_distance)
-	graphics:draw()
+	graphics:draw(x, y, rotation)
 end
 
 P:restart()

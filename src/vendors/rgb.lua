@@ -26,6 +26,61 @@ SOFTWARE.
 
 local RGB = {}
 
+if not bit then
+	local function memoize(f)
+		local mt = {}
+		local t = setmetatable({}, mt)
+		function mt:__index(k)
+			local v = f(k)
+			t[k] = v
+			return v
+		end
+
+		return t
+	end
+
+	local function make_bitop_uncached(t, m)
+		local function bitop(a, b)
+			local res, p = 0, 1
+			while a ~= 0 and b ~= 0 do
+				local am, bm = a % m, b % m
+				res = res + t[am][bm] * p
+				a = (a - am) / m
+				b = (b - bm) / m
+				p = p * m
+			end
+			res = res + (a + b) * p
+			return res
+		end
+		return bitop
+	end
+
+	local function make_bitop(t)
+		local op1 = make_bitop_uncached(t, 2 ^ 1)
+		local op2 = memoize(function(a)
+			return memoize(function(b)
+				return op1(a, b)
+			end)
+		end)
+		return make_bitop_uncached(op2, 2 ^ (t.n or 1))
+	end
+
+	local bxor = make_bitop({ [0] = { [0] = 0, [1] = 1 }, [1] = { [0] = 1, [1] = 0 }, n = 4 })
+
+	local function band(a, b)
+		return ((a + b) - bxor(a, b)) / 2
+	end
+
+	local function rshift(a, disp)
+		return math.floor(a % 2 ^ 32 / 2 ^ disp)
+	end
+
+	bit = {
+		band = band,
+		rshift = rshift,
+	}
+end
+
 ---Transform a number in `0xRRGGBB` format to a table RGB with values between 0..1
 ---@param num number must be in `0xRRGGBB` format
 ---@return table RGB on format `{1: number, 2: number, 3: number}` each number on value between 0..1
