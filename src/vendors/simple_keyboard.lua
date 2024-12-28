@@ -59,6 +59,7 @@ function SimpleKeyboard:keyBind(keys)
 		keys = { keys }
 	end
 	for _, k in pairs(keys) do
+		print(k)
 		self.keysPressed[k] = false
 		self.keysJustReleased[k] = false
 		self.keysJustPressed[k] = false

@@ -23,54 +23,65 @@ local rotation = 0
 local x = 0
 local y = 0
 local score = 0
-local canScore = false
+local can_score = false
+local visible = true
 
 function P:restart()
 	rotation = 0
 	distance = max_distance / 2 + size
 	rotation_speed = 0
 	score = 0
-	canScore = false
+	can_score = false
+	love.event.push("updateScore", score)
+	visible = true
+
+	x = center_width - math.sin(-rotation) * distance
+	y = center_height - math.cos(-rotation) * distance
 end
 
 function P:update(dt)
-	if STATE == "play" then
-		if KEYS:isDown("space") then
-			distance = distance + jump_speed * dt
-		else
-			distance = distance - fall_speed * dt
-		end
-
-		if distance < min_dinstance then
-			-- TODO: Kill
-			distance = min_dinstance
-		-- END
-		elseif distance > max_distance then
-			distance = max_distance
-		end
-		rotation_speed = max_rotation_speed - rotation_slop_change * (distance - min_dinstance)
-
-		local sin = math.sin(-rotation)
-		local cos = math.cos(-rotation)
-
-		if canScore and cos > 0 and sin < 0 then
-			score = score + 1
-			love.event.push("updateScore", score)
-			canScore = false
-		end
-		if not canScore and cos > 0 and sin > 0 then
-			canScore = true
-		end
+	if STATE ~= "play" then
+		graphics:update(dt)
+		return
 	end
 
+	if KEYS:isDown("space") then
+		distance = distance + jump_speed * dt
+	else
+		distance = distance - fall_speed * dt
+	end
+
+	if distance < min_dinstance then
+		-- Game over
+		STATE = "game_over"
+		visible = false
+	elseif distance > max_distance then
+		distance = max_distance
+	end
+
+	rotation_speed = max_rotation_speed - rotation_slop_change * (distance - min_dinstance)
 	rotation = rotation + (dt * rotation_speed)
-	x = center_width - math.sin(-rotation) * distance
-	y = center_height - math.cos(-rotation) * distance
+	local sin = math.sin(-rotation)
+	local cos = math.cos(-rotation)
+	x = center_width - sin * distance
+	y = center_height - cos * distance
+
+	if can_score and cos > 0 and sin < 0 then
+		score = score + 1
+		love.event.push("updateScore", score)
+		can_score = false
+	end
+	if not can_score and cos > 0 and sin > 0 then
+		can_score = true
+	end
 	graphics:update(dt)
 end
 
 function P:draw()
 	love.graphics.circle("line", center_width, center_height, max_distance)
+	if not visible then
+		return
+	end
 	graphics:draw(x, y, rotation)
 end
 

@@ -67,13 +67,16 @@ local function draw(self)
 	if not self.visible then
 		return
 	end
+	local current_render_target = love.graphics.getCanvas()
+	love.graphics.setCanvas(self.renderTarget)
+	for _, child in ipairs(self.childerns) do
+		child:draw()
+	end
+	love.graphics.setCanvas(current_render_target)
 	love.graphics.push()
 	love.graphics.translate(self.offset.x, self.offset.y)
 	love.graphics.scale(self.scale.x, self.scale.y)
 	love.graphics.draw(self.renderTarget)
-	for _, child in ipairs(self.childerns) do
-		child:draw()
-	end
 	love.graphics.pop()
 end
 

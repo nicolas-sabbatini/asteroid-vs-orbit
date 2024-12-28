@@ -1,10 +1,11 @@
-local factory = require("asteroid.factory")
+local common = require("asteroid.common")
 
 local asteroids = {}
+local heat = 10
 
 local A = {}
 
-function A:clear()
+function A:restart()
 	asteroids = {}
 end
 

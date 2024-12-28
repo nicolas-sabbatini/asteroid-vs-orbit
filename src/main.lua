@@ -1,5 +1,7 @@
 require("globals")
 
+love.math.setRandomSeed(os.time())
+
 local background = require("background")
 local player = require("player")
 local star = require("star")
@@ -10,11 +12,7 @@ function love.resize(w, h)
 	MAIN_SCREEN:resizeParent({ width = w, height = h })
 end
 
-function love.load()
-	local seed = os.time()
-	Tape.log("debug", "Current seed %d", seed)
-	love.math.setRandomSeed(seed)
-end
+function love.load() end
 
 function love.update(dt)
 	KEYS:updateInput()
