@@ -23,23 +23,24 @@ local rotation = 0
 local x = 0
 local y = 0
 local score = 0
+local canScore = false
 
 function P:restart()
 	rotation = 0
 	distance = max_distance / 2 + size
 	rotation_speed = 0
 	score = 0
+	canScore = false
 end
 
 function P:update(dt)
 	if STATE == "play" then
 		if KEYS:isDown("space") then
 			distance = distance + jump_speed * dt
-		-- TODO: DBG
 		else
 			distance = distance - fall_speed * dt
-			-- END
 		end
+
 		if distance < min_dinstance then
 			-- TODO: Kill
 			distance = min_dinstance
@@ -49,8 +50,17 @@ function P:update(dt)
 		end
 		rotation_speed = max_rotation_speed - rotation_slop_change * (distance - min_dinstance)
 
-		score = score + 10
-		love.event.push("updateScore", score)
+		local sin = math.sin(-rotation)
+		local cos = math.cos(-rotation)
+
+		if canScore and cos > 0 and sin < 0 then
+			score = score + 1
+			love.event.push("updateScore", score)
+			canScore = false
+		end
+		if not canScore and cos > 0 and sin > 0 then
+			canScore = true
+		end
 	end
 
 	rotation = rotation + (dt * rotation_speed)
