@@ -1,5 +1,8 @@
 local S = {}
 
+local center_width = GAME_WIDTH / 2
+local center_height = GAME_HEIGHT / 2
+
 local star_image = love.graphics.newImage("assets/sol.png")
 local image_offset = 0
 local star_image_movement = 90
@@ -30,7 +33,8 @@ function S:draw()
 	love.graphics.setStencilTest()
 	love.graphics.setCanvas(current_render_target)
 
-	love.graphics.draw(star_draw_target, (GAME_WIDTH / 2) - star_radius, (GAME_HEIGHT / 2) - star_radius)
+	love.graphics.draw(star_draw_target, center_width - star_radius, center_height - star_radius)
+	love.graphics.circle("line", center_width, center_height, 400)
 end
 
 return S

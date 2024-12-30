@@ -1,3 +1,5 @@
+local gui_name = "main_menu"
+
 local main_menu_size_x = GAME_WIDTH
 local main_menu_size_y = GAME_HEIGHT / 2 - 180
 
@@ -6,13 +8,17 @@ local font_help = love.graphics.newFont(15)
 
 local help_size = font_help:getHeight() + 20
 
+local text_options = 4
 local texts = {
 	"QUICK PLAY",
 	"STORE",
 	"OPTIONS",
 	"EXIT",
 }
-local text_options = 4
+local OPTION_QUICK_PLAY = 0
+local OPTION_STORE = 1
+local OPTION_OPTIONS = 2
+local OPTION_EXIT = 3
 
 local selected = 0
 local left = 3
@@ -25,21 +31,11 @@ local menu = LETTERBOX.newLetterbox({
 } --[[@as letterbox.Upscale.Constant]], {
 	width = main_menu_size_x,
 	height = main_menu_size_y,
-})
-
-MAIN_SCREEN:addChildren(menu)
+}, gui_name)
 
 local M = {}
 
-function M:update(dt)
-	if STATE ~= "main_menu" then
-		menu.visible = false
-		return
-	end
-	menu.visible = true
-	if KEYS:justPressed("space") then
-		STATE = "play"
-	end
+function M:update()
 	if KEYS:justPressed("left") then
 		selected = math.fmod(text_options + selected - 1, text_options)
 		left = math.fmod(text_options + selected - 1, text_options)
@@ -49,6 +45,20 @@ function M:update(dt)
 		selected = math.fmod(text_options + selected + 1, text_options)
 		left = math.fmod(text_options + selected - 1, text_options)
 		right = math.fmod(text_options + selected + 1, text_options)
+	end
+	if KEYS:justPressed("space") then
+		if selected == OPTION_QUICK_PLAY then
+			love.states.swichState("play")
+		end
+		if selected == OPTION_STORE then
+			love.states.swichState("store")
+		end
+		if selected == OPTION_OPTIONS then
+			love.states.swichState("option")
+		end
+		if selected == OPTION_EXIT then
+			love.event.push("quit")
+		end
 	end
 end
 
@@ -63,6 +73,14 @@ function M:draw()
 	love.graphics.printf(texts[right + 1], font, main_menu_size_x / 2, 100, main_menu_size_x / 2, "center")
 	love.graphics.printf("`SPACE` TO SELECT", font_help, 0, main_menu_size_y - help_size, main_menu_size_x, "center")
 	menu:stopDrawInsideRig()
+end
+
+function M:append()
+	MAIN_SCREEN:addChildren(menu)
+end
+
+function M:remove()
+	MAIN_SCREEN:removeChildren(gui_name)
 end
 
 return M

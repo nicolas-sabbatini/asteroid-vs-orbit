@@ -24,7 +24,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 --]]
 
-local RGB = {}
+local RGB = {
+	_LICENSE = "MIT License - Copyright (c) 2024",
+	_URL = "https://github.com/nicolas-sabbatini/lovely-tools",
+	_VERSION = "v0.1.0",
+}
 
 if not bit then
 	local function memoize(f)

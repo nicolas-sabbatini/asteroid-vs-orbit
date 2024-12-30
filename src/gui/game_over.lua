@@ -7,6 +7,7 @@ local font = love.graphics.newFont("assets/fonts/NewHiScore.ttf", 60)
 local font_score = love.graphics.newFont("assets/fonts/NewHiScore.ttf", 80)
 local line_offset = font:getHeight() + 20
 
+local gui_name_1 = "end_card_top"
 local end_card_top = LETTERBOX.newLetterbox({
 	type = "constant",
 	x = 0,
@@ -14,8 +15,9 @@ local end_card_top = LETTERBOX.newLetterbox({
 } --[[@as letterbox.Upscale.Constant]], {
 	width = end_card_size_x,
 	height = end_card_size_y,
-})
+}, gui_name_1)
 
+local gui_name_2 = "end_card_bot"
 local end_card_bot = LETTERBOX.newLetterbox({
 	type = "constant",
 	x = 0,
@@ -23,22 +25,11 @@ local end_card_bot = LETTERBOX.newLetterbox({
 } --[[@as letterbox.Upscale.Constant]], {
 	width = end_card_size_x,
 	height = end_card_size_y,
-})
-
-MAIN_SCREEN:addChildren(end_card_top)
-MAIN_SCREEN:addChildren(end_card_bot)
+}, gui_name_2)
 
 local G = {}
 
-function G:update(dt)
-	if STATE ~= "game_over" then
-		end_card_top.visible = false
-		end_card_bot.visible = false
-		return
-	end
-	end_card_top.visible = true
-	end_card_bot.visible = true
-end
+function G:update(dt) end
 
 function G:draw()
 	end_card_top:drawInsideRig()
@@ -80,6 +71,16 @@ end
 
 function G:updateScore(newScore)
 	score = newScore
+end
+
+function G:append()
+	MAIN_SCREEN:addChildren(end_card_top)
+	MAIN_SCREEN:addChildren(end_card_bot)
+end
+
+function G:remove()
+	MAIN_SCREEN:removeChildren(gui_name_1)
+	MAIN_SCREEN:removeChildren(gui_name_2)
 end
 
 return G

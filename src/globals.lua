@@ -1,9 +1,6 @@
 GAME_WIDTH = 1920
 GAME_HEIGHT = 1080
 
----@type "main_menu" | "play" | "game_over"
-STATE = "main_menu"
-
 -- Palette
 local rgb = require("vendors.rgb")
 BACKGROUND = rgb.exaToTable(0x181425)

@@ -1,42 +1,31 @@
 require("globals")
+require("vendors.state_manager")
+require("handlers")
 
 love.math.setRandomSeed(os.time())
 
+require("states.base")
+require("states.main_menu")
+require("states.play")
+require("states.game_over")
+
 local background = require("background")
-local player = require("player")
-local star = require("star")
-local asteroids = require("asteroid")
-local gui = require("gui")
 
 function love.resize(w, h)
 	MAIN_SCREEN:resizeParent({ width = w, height = h })
 end
 
-function love.load() end
+function love.load()
+	love.states.pushState("base")
+	love.states.pushState("main_menu")
+end
 
 function love.update(dt)
 	KEYS:updateInput()
 	background:update(dt)
-	star:update(dt)
-	player:update(dt)
-	asteroids:update(dt)
-	gui:update(dt)
 end
 
 function love.draw()
-	-- Draw game
-	MAIN_SCREEN:drawInsideRig()
-	love.graphics.clear(BACKGROUND)
-	background:draw()
-	player:draw()
-	asteroids:draw()
-	star:draw()
-	MAIN_SCREEN:stopDrawInsideRig()
-
-	-- Draw UI
-	gui:draw()
-
-	-- Draw to screen
 	love.graphics.clear(0.0, 0.0, 0.0, 1.0)
 	MAIN_SCREEN:draw()
 end

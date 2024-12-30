@@ -1,3 +1,5 @@
+local gui_name = "score"
+
 local score_size_x = GAME_WIDTH * 0.5
 local score_size_y = GAME_HEIGHT * 0.1
 local score = 0
@@ -12,19 +14,9 @@ local score_board = LETTERBOX.newLetterbox({
 } --[[@as letterbox.Upscale.Constant]], {
 	width = score_size_x,
 	height = score_size_y,
-})
-
-MAIN_SCREEN:addChildren(score_board)
+}, gui_name)
 
 local S = {}
-
-function S:update(dt)
-	if STATE ~= "play" then
-		score_board.visible = false
-		return
-	end
-	score_board.visible = true
-end
 
 function S:draw()
 	score_board:drawInsideRig()
@@ -35,6 +27,14 @@ end
 
 function S:updateScore(newScore)
 	score = newScore
+end
+
+function S:append()
+	MAIN_SCREEN:addChildren(score_board)
+end
+
+function S:remove()
+	MAIN_SCREEN:removeChildren(gui_name)
 end
 
 return S
