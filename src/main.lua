@@ -1,6 +1,7 @@
 require("globals")
 require("vendors.state_manager")
 require("handlers")
+require("save_system")
 
 love.math.setRandomSeed(os.time())
 

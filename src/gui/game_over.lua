@@ -1,3 +1,5 @@
+local save = require("save_system")
+
 local end_card_size_x = GAME_WIDTH
 local end_card_size_y = GAME_HEIGHT / 2 - 180
 local score = 0
@@ -102,6 +104,10 @@ end
 
 function G:updateScore(newScore)
 	score = newScore
+	if newScore > HIGH_SCORE then
+		HIGH_SCORE = newScore
+		save()
+	end
 end
 
 function G:append()
