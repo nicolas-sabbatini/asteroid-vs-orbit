@@ -1,6 +1,8 @@
 GAME_WIDTH = 1920
 GAME_HEIGHT = 1080
 
+HIGH_SCORE = 0
+
 -- Palette
 local rgb = require("vendors.rgb")
 BACKGROUND = rgb.exaToTable(0x181425)

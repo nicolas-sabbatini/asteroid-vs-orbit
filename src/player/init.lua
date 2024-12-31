@@ -37,7 +37,7 @@ function P:restart()
 	y = center_height - math.cos(-rotation) * distance
 end
 
-function P:updateMuvement(dt)
+function P:updateMovement(dt)
 	if KEYS:isDown("space") then
 		distance = distance + jump_speed * dt
 	else

@@ -9,7 +9,7 @@ love.states.addState("play", {
 	end,
 	update = function(dt)
 		star:update(dt)
-		player:updateMuvement(dt)
+		player:updateMovement(dt)
 		player:updateGraphics(dt)
 	end,
 	draw = function()

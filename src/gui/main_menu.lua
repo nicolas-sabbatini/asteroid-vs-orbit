@@ -19,7 +19,6 @@ local OPTION_QUICK_PLAY = 0
 local OPTION_STORE = 1
 local OPTION_OPTIONS = 2
 local OPTION_EXIT = 3
-
 local selected = 0
 local left = 3
 local right = 1
