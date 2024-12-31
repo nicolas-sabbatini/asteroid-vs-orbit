@@ -8,7 +8,7 @@ local center_height = GAME_HEIGHT / 2
 
 -- Const gameplay
 local max_distance = 400 -- Distance to center of star
-local min_dinstance = 90 -- Distance to center of star
+local min_dinstance = 100 -- Distance to center of star
 local max_rotation_speed = 2.5
 local min_rotation_speed = 0.5
 local rotation_slop_change = (max_rotation_speed - min_rotation_speed) / (max_distance - min_dinstance)

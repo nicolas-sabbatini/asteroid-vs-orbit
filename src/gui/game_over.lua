@@ -29,7 +29,7 @@ local end_card_bot = LETTERBOX.newLetterbox({
 
 local G = {}
 
-function G:update(dt) end
+function G:update() end
 
 function G:draw()
 	end_card_top:drawInsideRig()
