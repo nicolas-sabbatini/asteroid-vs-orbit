@@ -20,6 +20,7 @@ love.states.addState("play", {
 		MAIN_SCREEN:stopDrawInsideRig()
 	end,
 	exit = function()
+		player:restart()
 		gui:remove()
 	end,
 })

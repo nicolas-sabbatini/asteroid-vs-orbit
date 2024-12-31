@@ -8,6 +8,7 @@ love.states.addState("game_over", {
 	end,
 	update = function(dt)
 		star:update(dt)
+		gui:update()
 	end,
 	draw = function()
 		MAIN_SCREEN:drawInsideRig()

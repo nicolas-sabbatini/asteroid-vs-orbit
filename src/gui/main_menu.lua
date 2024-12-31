@@ -40,13 +40,11 @@ function M:update()
 		selected = math.fmod(text_options + selected - 1, text_options)
 		left = math.fmod(text_options + selected - 1, text_options)
 		right = math.fmod(text_options + selected + 1, text_options)
-	end
-	if KEYS:justPressed("right") then
+	elseif KEYS:justPressed("right") then
 		selected = math.fmod(text_options + selected + 1, text_options)
 		left = math.fmod(text_options + selected - 1, text_options)
 		right = math.fmod(text_options + selected + 1, text_options)
-	end
-	if KEYS:justPressed("space") then
+	elseif KEYS:justPressed("space") then
 		if selected == OPTION_QUICK_PLAY then
 			love.states.swichState("play")
 		end

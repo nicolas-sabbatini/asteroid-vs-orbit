@@ -29,7 +29,13 @@ local end_card_bot = LETTERBOX.newLetterbox({
 
 local G = {}
 
-function G:update() end
+function G:update()
+	if KEYS:justPressed("escape") then
+		love.states.swichState("main_menu")
+	elseif KEYS:justPressed("space") then
+		love.states.swichState("play")
+	end
+end
 
 function G:draw()
 	end_card_top:drawInsideRig()

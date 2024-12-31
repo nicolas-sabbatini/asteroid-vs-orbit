@@ -18,7 +18,7 @@ MAIN_SCREEN = LETTERBOX.newLetterbox({
 
 -- Keys
 KEYS = require("vendors.simple_keyboard")
-KEYS:keyBind({ "space", "left", "right" })
+KEYS:keyBind({ "space", "left", "right", "escape" })
 
 -- Tape
 require("vendors.tape")
