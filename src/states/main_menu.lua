@@ -4,6 +4,7 @@ local star = require("star")
 
 love.states.addState("main_menu", {
 	enter = function()
+		Tape.log("debug", "Enter main menu state")
 		main_menu:append()
 	end,
 	update = function(dt)
@@ -19,6 +20,7 @@ love.states.addState("main_menu", {
 		main_menu:draw()
 	end,
 	exit = function()
+		Tape.log("debug", "Exit main menu state")
 		main_menu:remove()
 	end,
 })

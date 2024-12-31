@@ -25,6 +25,8 @@ local y = 0
 local score = 0
 local can_score = false
 
+local score_sound = love.audio.newSource("assets/score.wav", "static")
+
 function P:restart()
 	rotation = 0
 	distance = max_distance / 2 + size
@@ -61,6 +63,7 @@ function P:updateMovement(dt)
 		score = score + 1
 		love.event.push("updateScore", score)
 		can_score = false
+		score_sound:play()
 	end
 	if not can_score and cos > 0 and sin > 0 then
 		can_score = true

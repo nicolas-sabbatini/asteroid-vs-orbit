@@ -4,6 +4,7 @@ local gui = require("gui.play")
 
 love.states.addState("play", {
 	enter = function()
+		Tape.log("debug", "Enter play state")
 		player:restart()
 		gui:append()
 	end,
@@ -20,6 +21,7 @@ love.states.addState("play", {
 		MAIN_SCREEN:stopDrawInsideRig()
 	end,
 	exit = function()
+		Tape.log("debug", "Exit play state")
 		player:restart()
 		gui:remove()
 	end,

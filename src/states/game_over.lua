@@ -3,6 +3,7 @@ local star = require("star")
 
 love.states.addState("game_over", {
 	enter = function(score)
+		Tape.log("debug", "Enter game over state")
 		gui:updateScore(score)
 		gui:append()
 	end,
@@ -17,6 +18,7 @@ love.states.addState("game_over", {
 		gui:draw()
 	end,
 	exit = function()
+		Tape.log("debug", "Exit game over state")
 		gui:remove()
 	end,
 })
