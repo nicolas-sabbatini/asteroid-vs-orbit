@@ -51,7 +51,7 @@ function M:update()
 			love.states.swichState("store")
 		end
 		if selected == OPTION_OPTIONS then
-			love.states.swichState("option")
+			love.states.swichState("options")
 		end
 		if selected == OPTION_EXIT then
 			love.event.push("quit")

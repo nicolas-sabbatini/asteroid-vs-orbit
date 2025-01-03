@@ -6,9 +6,11 @@ require("save_system")
 love.math.setRandomSeed(os.time())
 
 require("states.base")
-require("states.main_menu")
-require("states.play")
 require("states.game_over")
+require("states.main_menu")
+require("states.options")
+require("states.play")
+require("states.store")
 
 local background = require("background")
 local shader
