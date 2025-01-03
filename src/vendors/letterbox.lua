@@ -1,5 +1,5 @@
 --[[
-letterbox.lua v0.1.0
+letterbox.lua v0.2.0
 
 The MIT License (MIT)
 
@@ -37,13 +37,16 @@ end
 ---@field width number
 ---@field height number
 
----@class letterbox.Upscale.Normal: letterbox.Rectangle
+---@class letterbox.PostProcessing
+---@field shaders love.Shader[]?
+
+---@class letterbox.Upscale.Normal: letterbox.Rectangle, letterbox.PostProcessing
 ---@field type 'normal'
 
----@class letterbox.Upscale.PixelPerfect: letterbox.Rectangle
+---@class letterbox.Upscale.PixelPerfect: letterbox.Rectangle, letterbox.PostProcessing
 ---@field type 'pixel-perfect'
 
----@class letterbox.Upscale.Constant
+---@class letterbox.Upscale.Constant: letterbox.PostProcessing
 ---@field type 'constant'
 ---@field x number
 ---@field y number
@@ -51,39 +54,50 @@ end
 ---@class letterbox.Rig
 ---@field package size letterbox.Rectangle
 ---@field package childerns letterbox.Rig[]
----@field package renderTarget love.Canvas
+---@field package swapchainFront love.Canvas
+---@field package swapchainBack love.Canvas
 ---@field package offset {x: number, y: number}
 ---@field package scale {x: number, y: number}
----@field visible boolean true by default
 ---@field name string
+---@field drawPipeline love.Shader[]
 ---@field draw fun(self: letterbox.Rig) draws the current and child rigs on the screen
 ---@field drawInsideRig fun(self: letterbox.Rig) start drawing inside the rig, the next draw call will modify the internal canvas of the rig (after all wanted changes you mus call `stopDrawInsideRig`)
 ---@field stopDrawInsideRig fun(self: letterbox.Rig) stop drawing inside the rig, this function is expected to be call after `drawInsideRig`
 ---@field addChildren fun(self: letterbox.Rig, children: letterbox.Rig) adds a children to the rig
----@field removeChildren fun(self: letterbox.Rig, childrenName: string) removes the target children, if the children do not exist does nothing
+---@field removeChildren fun(self: letterbox.Rig, childrenName: string): letterbox.Rig? removes the target children, if the children do not exist does nothing
+---@field pushPostProcessing fun(self: letterbox.Rig, shader: love.Shader) adds a new post processing effect at the end of the draw pipeline
+---@field popPostProcessing fun(self: letterbox.Rig,): love.Shader removes the last post processing effect of the draw pipeline
 
 ---@param self letterbox.Rig
 local function draw(self)
-	if not self.visible then
-		return
-	end
 	local current_render_target = love.graphics.getCanvas()
-	love.graphics.setCanvas(self.renderTarget)
+	local current_shader = love.graphics.getShader()
+	love.graphics.setCanvas(self.swapchainBack)
+	love.graphics.setShader()
 	for _, child in ipairs(self.childerns) do
 		child:draw()
 	end
+	for _, shader in pairs(self.drawPipeline) do
+		love.graphics.setCanvas(self.swapchainFront)
+		love.graphics.setShader(shader)
+		love.graphics.draw(self.swapchainBack)
+		local h = self.swapchainBack
+		self.swapchainBack = self.swapchainFront
+		self.swapchainFront = h
+	end
 	love.graphics.setCanvas(current_render_target)
+	love.graphics.setShader(current_shader)
 	love.graphics.push()
 	love.graphics.translate(self.offset.x, self.offset.y)
 	love.graphics.scale(self.scale.x, self.scale.y)
-	love.graphics.draw(self.renderTarget)
+	love.graphics.draw(self.swapchainBack)
 	love.graphics.pop()
 end
 
 ---@param self letterbox.Rig
 local function drawInsideRig(self)
 	love.graphics.push()
-	love.graphics.setCanvas(self.renderTarget)
+	love.graphics.setCanvas(self.swapchainBack)
 end
 
 local function stopDrawInsideRig(_)
@@ -106,6 +120,18 @@ local function removeChildren(self, childrenName)
 			return table.remove(self.childerns, k)
 		end
 	end
+end
+
+---@param self letterbox.Rig
+---@param effect love.Shader
+local function pushPostProcessing(self, effect)
+	table.insert(self.drawPipeline, effect)
+end
+
+---@param self letterbox.Rig
+---@return love.Shader | nil
+local function popPostProcessing(self)
+	return table.remove(self.drawPipeline)
 end
 
 ---@class letterbox.Rig.Normal: letterbox.Rig
@@ -150,8 +176,9 @@ local function pixelPerfectReCalculateVariables(self)
 	local newScaleFactor = math.min(self.upscale.width / self.size.width, self.upscale.height / self.size.height)
 	if newScaleFactor > 1 then
 		newScaleFactor = math.floor(newScaleFactor)
+	else
+		newScaleFactor = math.floor(newScaleFactor * 10) / 10
 	end
-	print(newScaleFactor)
 	self.scale.x = newScaleFactor
 	self.scale.y = newScaleFactor
 	local new_width = self.size.width * newScaleFactor
@@ -189,7 +216,9 @@ function Letterbox.newLetterbox(upscale, size, name)
 		upscale = upscale,
 		size = size,
 		childerns = {},
-		renderTarget = love.graphics.newCanvas(size.width, size.height),
+		swapchainBack = love.graphics.newCanvas(size.width, size.height),
+		swapchainFront = love.graphics.newCanvas(size.width, size.height),
+		drawPipeline = upscale.shaders or {},
 		offset = { x = 0, y = 0 },
 		scale = { x = 1, y = 1 },
 		name = name or uuid(),
@@ -198,7 +227,8 @@ function Letterbox.newLetterbox(upscale, size, name)
 		stopDrawInsideRig = stopDrawInsideRig,
 		addChildren = addChildren,
 		removeChildren = removeChildren,
-		visible = true,
+		popPostProcessing = popPostProcessing,
+		pushPostProcessing = pushPostProcessing,
 	}
 
 	if upscale.type == "normal" then

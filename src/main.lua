@@ -11,9 +11,14 @@ require("states.play")
 require("states.game_over")
 
 local background = require("background")
+local shader
 
 function love.resize(w, h)
 	MAIN_SCREEN:resizeParent({ width = w, height = h })
+	local shader_code = love.filesystem.read("shaders/ctr.glsl")
+	shader = love.graphics.newShader(shader_code)
+	shader:send("iResolution", { GAME_WIDTH, GAME_HEIGHT })
+	MAIN_SCREEN:pushPostProcessing(shader)
 end
 
 function love.load()
