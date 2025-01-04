@@ -2,6 +2,7 @@ require("globals")
 require("vendors.state_manager")
 require("handlers")
 require("save_system")
+require("audio_handler")
 
 love.math.setRandomSeed(os.time())
 
