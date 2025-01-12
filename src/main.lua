@@ -18,15 +18,16 @@ local shader
 
 function love.resize(w, h)
 	MAIN_SCREEN:resizeParent({ width = w, height = h })
-	local shader_code = love.filesystem.read("shaders/ctr.glsl")
-	shader = love.graphics.newShader(shader_code)
-	shader:send("iResolution", { GAME_WIDTH, GAME_HEIGHT })
-	MAIN_SCREEN:pushPostProcessing(shader)
 end
 
 function love.load()
 	love.states.pushState("base")
 	love.states.pushState("main_menu")
+
+	local shader_code = love.filesystem.read("shaders/ctr.glsl")
+	shader = love.graphics.newShader(shader_code)
+	shader:send("iResolution", { GAME_WIDTH, GAME_HEIGHT })
+	MAIN_SCREEN:pushPostProcessing(shader)
 end
 
 function love.update(dt)
