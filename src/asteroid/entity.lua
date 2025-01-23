@@ -30,7 +30,7 @@ function Asteroid:updatePosition()
 end
 
 function Asteroid:draw(img)
-	love.graphics.draw(img, self.x, self.y, self.angle, 1, 1, draw_offset, draw_offset)
+	love.graphics.draw(img, self.x, self.y, self.rotation, 1, 1, draw_offset, draw_offset)
 	love.graphics.draw(self.particle_system, self.x, self.y)
 end
 
@@ -49,12 +49,13 @@ return function()
 	particle_system:setParticleLifetime(0.5, 1.5)
 	particle_system:setEmissionRate(50)
 	particle_system:setEmissionArea("ellipse", 20, 20)
-	particle_system:setLinearAcceleration((-0.25 * speed) * sin, (-0.25 * speed) * cos)
+	particle_system:setLinearAcceleration((-0.5 * speed) * sin, (-0.5 * speed) * cos)
 	particle_system:setColors(
 		rgb.alphaExaToTable(0x733e39ff),
 		rgb.alphaExaToTable(0xb86f50ff),
 		rgb.alphaExaToTable(0xb86f5000)
 	)
+	particle_system:setSizes(1.3, 0)
 
 	local new_asteroid = setmetatable({
 		distance = distance,
