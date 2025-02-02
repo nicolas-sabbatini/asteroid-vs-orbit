@@ -1,5 +1,13 @@
 local save_file = "save.lua"
 
+if love.system.getOS() == "Web" then
+	Tape.log("debug", "runing on Web")
+
+	return function()
+		Tape.log("debug", "Can't save on Web")
+	end
+end
+
 local function interpolate_score(score)
 	return string.format("return { HIGH_SCORE = %d }", score)
 end

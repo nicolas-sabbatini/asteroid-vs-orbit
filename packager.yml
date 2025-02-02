@@ -1,0 +1,12 @@
+name: orbit
+version: 1.0.0
+icon: logo.png
+description: "Small open source game in which you are a planet trying to end your orbit while dodging asteroids."
+
+assets:
+  - src/**/*
+
+targets:
+  - love
+  - win-64
+  - linux

@@ -16,7 +16,11 @@ require("states.store")
 local background = require("background")
 local shader
 
-function love.resize(w, h)
+function love.resize()
+	-- Si bien esta funcion trae el w, h hay casos en los que se buguea.
+	-- ya que calculamos unas cosas en el globals si el systema despues detecta que la config
+	-- es más grande que la pantalla se hace un resize pero no resizea de verdad
+	local w, h = love.graphics.getDimensions()
 	MAIN_SCREEN:resizeParent({ width = w, height = h })
 end
 

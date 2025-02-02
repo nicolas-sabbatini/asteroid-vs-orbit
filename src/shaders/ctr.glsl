@@ -1,4 +1,3 @@
-#pragma language glsl3
 // https://www.shadertoy.com/view/ltf3WB
 extern vec2 iResolution;
 
