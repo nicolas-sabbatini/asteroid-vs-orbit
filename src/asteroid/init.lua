@@ -60,4 +60,8 @@ function A:draw()
 	end
 end
 
+function A:get()
+	return asteroids
+end
+
 return A

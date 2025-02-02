@@ -6,7 +6,8 @@ local tau = math.pi * 2
 
 local center_width = GAME_WIDTH / 2
 local center_height = GAME_HEIGHT / 2
-local draw_offset = 44 / 2
+local size = 44
+local draw_offset = size / 2
 
 local particle = love.graphics.newImage("assets/pixel.png")
 particle:setFilter("nearest", "nearest")
@@ -32,6 +33,10 @@ end
 function Asteroid:draw(img)
 	love.graphics.draw(img, self.x, self.y, self.rotation, 1, 1, draw_offset, draw_offset)
 	love.graphics.draw(self.particle_system, self.x, self.y)
+end
+
+function Asteroid:getCordSize()
+	return self.x, self.y, size / 2
 end
 
 return function()
@@ -66,6 +71,7 @@ return function()
 		y = y,
 		rotation = rotation,
 		particle_system = particle_system,
+		can_score = true,
 	}, { __index = Asteroid })
 
 	return new_asteroid

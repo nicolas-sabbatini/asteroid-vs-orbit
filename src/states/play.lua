@@ -2,6 +2,7 @@ local player = require("player")
 local star = require("star")
 local gui = require("gui.play")
 local asteroids = require("asteroid")
+local physics = require("physics")
 
 love.states.addState("play", {
 	enter = function()
@@ -15,6 +16,7 @@ love.states.addState("play", {
 		player:updateMovement(dt)
 		player:updateGraphics(dt)
 		asteroids:update(dt)
+		physics:calculate()
 	end,
 	draw = function()
 		MAIN_SCREEN:drawInsideRig()

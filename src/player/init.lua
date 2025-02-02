@@ -45,7 +45,7 @@ function P:updateMovement(dt)
 	end
 
 	if distance < min_dinstance then
-		love.states.swichState("game_over", score)
+		self:kill()
 	elseif distance > max_distance then
 		distance = max_distance
 	end
@@ -58,9 +58,7 @@ function P:updateMovement(dt)
 	y = center_height - cos * distance
 
 	if can_score and cos > 0 and sin < 0 then
-		score = score + 1
-		love.event.push("updateScore", score)
-		love.event.push("playScoreSound", score)
+		self:score()
 		can_score = false
 	end
 	if not can_score and cos > 0 and sin > 0 then
@@ -74,6 +72,23 @@ end
 
 function P:draw()
 	graphics:draw(x, y, rotation)
+end
+
+---@return integer x
+---@return integer y
+---@return integer size
+function P:getCordSize()
+	return x, y, size / 2
+end
+
+function P:kill()
+	love.states.swichState("game_over", score)
+end
+
+function P:score()
+	score = score + 1
+	love.event.push("updateScore", score)
+	love.event.push("playScoreSound", score)
 end
 
 P:restart()
