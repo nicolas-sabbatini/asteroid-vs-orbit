@@ -1,8 +1,7 @@
 local save_file = "save.lua"
 
-if love.system.getOS() == "Web" then
+if OS == "Web" then
 	Tape.log("debug", "runing on Web")
-
 	return function()
 		Tape.log("debug", "Can't save on Web")
 	end

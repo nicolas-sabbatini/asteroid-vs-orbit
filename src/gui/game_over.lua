@@ -8,17 +8,22 @@ local font = love.graphics.newFont("assets/fonts/NewHiScore.ttf", 60)
 local font_score = love.graphics.newFont("assets/fonts/NewHiScore.ttf", 80)
 local line_offset = font:getHeight() + 20
 
-local text_options = 3
-local texts = {
-	"PLAY AGAIN",
-	"MENU",
-	"EXIT",
-}
-local OPTION_PLAY_AGAIN = 0
-local OPTION_MENU = 1
-local OPTION_EXIT = 2
+local texts = {}
+if OS == "Web" then
+	texts = {
+		"PLAY AGAIN",
+		"MENU",
+	}
+else
+	texts = {
+		"PLAY AGAIN",
+		"MENU",
+		"EXIT",
+	}
+end
+local text_options = #texts
 local selected = 0
-local left = 2
+local left = text_options - 1
 local right = 1
 
 local gui_name_1 = "end_card_top"
@@ -53,13 +58,12 @@ function G:update()
 		left = math.fmod(text_options + selected - 1, text_options)
 		right = math.fmod(text_options + selected + 1, text_options)
 	elseif KEYS:justPressed("space") then
-		if selected == OPTION_PLAY_AGAIN then
+		local is_selected = selected + 1
+		if texts[is_selected] == "PLAY AGAIN" then
 			love.states.swichState("play")
-		end
-		if selected == OPTION_MENU then
+		elseif texts[is_selected] == "MENU" then
 			love.states.swichState("main_menu")
-		end
-		if selected == OPTION_EXIT then
+		elseif texts[is_selected] == "EXIT" then
 			love.event.push("quit")
 		end
 	end
@@ -113,9 +117,6 @@ end
 function G:append()
 	MAIN_SCREEN:addChildren(end_card_top)
 	MAIN_SCREEN:addChildren(end_card_bot)
-	selected = 0
-	left = 2
-	right = 1
 end
 
 function G:remove()

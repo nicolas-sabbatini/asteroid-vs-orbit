@@ -8,19 +8,24 @@ local font_help = love.graphics.newFont(15)
 
 local help_size = font_help:getHeight() + 20
 
-local text_options = 4
-local texts = {
-	"QUICK PLAY",
-	"STORE",
-	"OPTIONS",
-	"EXIT",
-}
-local OPTION_QUICK_PLAY = 0
-local OPTION_STORE = 1
-local OPTION_OPTIONS = 2
-local OPTION_EXIT = 3
+local texts = {}
+if OS == "Web" then
+	texts = {
+		"QUICK PLAY",
+		"STORE",
+		"OPTIONS",
+	}
+else
+	texts = {
+		"QUICK PLAY",
+		"STORE",
+		"OPTIONS",
+		"EXIT",
+	}
+end
+local text_options = #texts
 local selected = 0
-local left = 3
+local left = #texts - 1
 local right = 1
 
 local menu = LETTERBOX.newLetterbox({
@@ -44,16 +49,14 @@ function M:update()
 		left = math.fmod(text_options + selected - 1, text_options)
 		right = math.fmod(text_options + selected + 1, text_options)
 	elseif KEYS:justPressed("space") then
-		if selected == OPTION_QUICK_PLAY then
+		local is_selected = selected + 1
+		if texts[is_selected] == "QUICK PLAY" then
 			love.states.swichState("play")
-		end
-		if selected == OPTION_STORE then
+		elseif texts[is_selected] == "STORE" then
 			love.states.swichState("store")
-		end
-		if selected == OPTION_OPTIONS then
+		elseif texts[is_selected] == "OPTIONS" then
 			love.states.swichState("options")
-		end
-		if selected == OPTION_EXIT then
+		elseif texts[is_selected] == "EXIT" then
 			love.event.push("quit")
 		end
 	end
