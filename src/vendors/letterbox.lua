@@ -52,12 +52,12 @@ end
 ---@field y number
 
 ---@class letterbox.Rig
----@field package size letterbox.Rectangle
----@field package childerns letterbox.Rig[]
----@field package swapchainFront love.Canvas
----@field package swapchainBack love.Canvas
----@field package offset {x: number, y: number}
----@field package scale {x: number, y: number}
+---@field size letterbox.Rectangle
+---@field childerns letterbox.Rig[]
+---@field swapchainFront love.Canvas
+---@field swapchainBack love.Canvas
+---@field offset {x: number, y: number}
+---@field scale {x: number, y: number}
 ---@field name string
 ---@field drawPipeline love.Shader[]
 ---@field draw fun(self: letterbox.Rig) draws the current and child rigs on the screen
