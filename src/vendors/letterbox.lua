@@ -1,5 +1,5 @@
 --[[
-letterbox.lua v0.2.0
+letterbox.lua v0.2.1
 
 The MIT License (MIT)
 
@@ -61,12 +61,15 @@ end
 ---@field name string
 ---@field drawPipeline love.Shader[]
 ---@field draw fun(self: letterbox.Rig) draws the current and child rigs on the screen
----@field drawInsideRig fun(self: letterbox.Rig) start drawing inside the rig, the next draw call will modify the internal canvas of the rig (after all wanted changes you mus call `stopDrawInsideRig`)
+---@field drawInsideRig fun(self: letterbox.Rig) start drawing inside the rig, the next draw call will modify the internal canvas of the rig - after all wanted changes you must call `stopDrawInsideRig`
 ---@field stopDrawInsideRig fun(self: letterbox.Rig) stop drawing inside the rig, this function is expected to be call after `drawInsideRig`
 ---@field addChildren fun(self: letterbox.Rig, children: letterbox.Rig) adds a children to the rig
 ---@field removeChildren fun(self: letterbox.Rig, childrenName: string): letterbox.Rig? removes the target children, if the children do not exist does nothing
 ---@field pushPostProcessing fun(self: letterbox.Rig, shader: love.Shader) adds a new post processing effect at the end of the draw pipeline
 ---@field popPostProcessing fun(self: letterbox.Rig,): love.Shader removes the last post processing effect of the draw pipeline
+---@field resizeParent fun(self: letterbox.Rig, parent: letterbox.Rectangle) | nil recalculates the rig variables to fit new parent - Is only nil in Letterbox.Rig.Constant
+---@field renderPriority number the render priority that the layer has compared to its siblings - the higher the priority, the later it will be rendered - by default is the index when pushed as a child
+---@field sortChildrens fun(self: letterbox.Rig) sort childerns acording to the `renderPriority` variable
 
 ---@param self letterbox.Rig
 local function draw(self)
@@ -109,6 +112,14 @@ end
 ---@param child letterbox.Rig
 local function addChildren(self, child)
 	table.insert(self.childerns, child)
+	self:sortChildrens()
+end
+
+---@param self letterbox.Rig
+local function sortChildrens(self)
+	table.sort(self.childerns, function(a, b)
+		return a.renderPriority < b.renderPriority
+	end)
 end
 
 ---@param self letterbox.Rig
@@ -190,6 +201,7 @@ end
 ---@class letterbox.Rig.Constant: letterbox.Rig
 ---@field package upscale letterbox.Upscale.Constant
 ---@field move fun(self: letterbox.Rig.Constant, x: number, y: number) move the top left corner off the rig to the new coordinates
+---@field resize fun(self: letterbox.Rig.Constant, newSize: letterbox.Rectangle) resize the rig to the new dimensions
 
 ---@param self letterbox.Rig.Constant
 ---@param x number
@@ -199,6 +211,19 @@ local function constantMove(self, x, y)
 	self.upscale.y = y
 	self.offset.x = x
 	self.offset.y = y
+end
+
+---@param self letterbox.Rig.Constant
+---@param newSize letterbox.Rectangle
+local function constantResize(self, newSize)
+	self.size = newSize
+	self.swapchainBack = love.graphics.newCanvas(newSize.width, newSize.height)
+	self.swapchainFront = love.graphics.newCanvas(newSize.width, newSize.height)
+	for _, child in pairs(self.childerns) do
+		if child.resizeParent then
+			child:resizeParent(newSize)
+		end
+	end
 end
 
 local Letterbox = {
@@ -229,6 +254,7 @@ function Letterbox.newLetterbox(upscale, size, name)
 		removeChildren = removeChildren,
 		popPostProcessing = popPostProcessing,
 		pushPostProcessing = pushPostProcessing,
+		sortChildrens = sortChildrens,
 	}
 
 	if upscale.type == "normal" then
@@ -245,6 +271,7 @@ function Letterbox.newLetterbox(upscale, size, name)
 		newRig.offset.x = upscale.x
 		newRig.offset.y = upscale.y
 		newRig.move = constantMove
+		newRig.resize = constantResize
 		return newRig --[[@as letterbox.Rig.Constant]]
 	else
 		error("Unknown letterbox rig upscale config")
