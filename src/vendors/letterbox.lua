@@ -1,5 +1,5 @@
 --[[
-letterbox.lua v0.2.1
+letterbox.lua v0.2.2
 
 The MIT License (MIT)
 
@@ -111,6 +111,9 @@ end
 ---@param self letterbox.Rig
 ---@param child letterbox.Rig
 local function addChildren(self, child)
+	if not child.renderPriority then
+		child.renderPriority = 9999
+	end
 	table.insert(self.childerns, child)
 	self:sortChildrens()
 end
